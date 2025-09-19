@@ -1,55 +1,42 @@
 'use strict';
 
-const workerListItems = document.querySelectorAll('li');
+function parseSalary(str) {
+  return Number(str.replace(/[$,]/g, ''));
+}
 
-function getEmployees(listItems) {
+function getEmployees(listEl) {
   const workers = [];
 
-  for (const listItem of listItems) {
+  for (const li of listEl.children) {
     workers.push({
-      name: listItem.textContent,
-      position: listItem.dataset.position,
-      salary: listItem.dataset.salary,
-      age: listItem.dataset.age,
+      name: li.textContent.trim(),
+      position: li.dataset.position,
+      salary: parseSalary(li.dataset.salary),
+      age: Number(li.dataset.age),
     });
   }
 
   return workers;
 }
 
-const workersObjects = getEmployees(workerListItems);
+function sortList(listEl) {
+  const items = Array.from(listEl.children);
 
-function sortList(workersList) {
-  workersList.sort((a, b) => {
-    const workerSalaryFirst = Number(a.salary.replace(/[$,]/g, ''));
-    const workerSalarySecond = Number(b.salary.replace(/[$,]/g, ''));
+  items.sort((a, b) => {
+    const salaryA = parseSalary(a.dataset.salary);
+    const salaryB = parseSalary(b.dataset.salary);
 
-    if (workerSalaryFirst > workerSalarySecond) {
-      return -1;
-    }
-
-    if (workerSalaryFirst < workerSalarySecond) {
-      return 1;
-    }
-
-    return 0;
+    return salaryB - salaryA;
   });
 
-  const documentList = document.querySelector('ul');
-
-  documentList.innerHTML = '';
-
-  workersList.forEach((worker) => {
-    const li = document.createElement('li');
-
-    li.textContent = worker.name;
-    li.dataset.position = worker.position;
-    li.dataset.salary = worker.salary;
-    li.dataset.age = worker.age;
-    documentList.appendChild(li);
-  });
-
-  return workersList;
+  items.forEach((li) => listEl.appendChild(li));
 }
 
-sortList(workersObjects);
+const list = document.querySelector('ul');
+
+getEmployees(list);
+
+sortList(list);
+
+window.getEmployees = getEmployees;
+window.sortList = sortList;
