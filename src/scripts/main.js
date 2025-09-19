@@ -34,9 +34,12 @@ function sortList(listEl) {
 
 const list = document.querySelector('ul');
 
-getEmployees(list);
+if (list) {
+  const employees = getEmployees(list);
 
-sortList(list);
+  sortList(list);
 
-window.getEmployees = getEmployees;
-window.sortList = sortList;
+  window.getEmployees = getEmployees;
+  window.sortList = sortList;
+  window.employees = employees;
+}
